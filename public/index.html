@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Compositor</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        input, button { margin: 10px; padding: 10px; font-size: 16px; }
+        #resultado { margin-top: 20px; white-space: pre-line; }
+    </style>
+</head>
+<body>
+    <h1>Chatbot Compositor</h1>
+    <label>Estilo:</label>
+    <input type="text" id="estilo" placeholder="Forró, Sertanejo...">
+    <br>
+    <label>Tema:</label>
+    <input type="text" id="tema" placeholder="Amor, festa, saudade...">
+    <br>
+    <button onclick="gerarMusica()">Gerar Letra</button>
+    <h3>Resultado:</h3>
+    <p id="resultado"></p>
+
+    <script>
+        async function gerarMusica() {
+            const estilo = document.getElementById('estilo').value;
+            const tema = document.getElementById('tema').value;
+
+            if (!estilo || !tema) {
+                alert('Por favor, preencha o estilo e o tema.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/compor', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ estilo, tema })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Falha ao gerar a letra.');
+                }
+
+                const data = await response.json();
+                document.getElementById('resultado').textContent = data.composicao || 'Erro ao gerar letra.';
+            } catch (error) {
+                document.getElementById('resultado').textContent = 'Erro ao tentar gerar a letra: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
